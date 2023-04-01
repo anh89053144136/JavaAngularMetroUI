@@ -27,6 +27,25 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- библиотека миграций БД -->
+		<dependency>
+		    <groupId>org.liquibase</groupId>
+		    <artifactId>liquibase-core</artifactId>
+		    <version>4.20.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-core</artifactId>
+		    <version>6.1.7.Final</version>
+		</dependency>
+		
 	</dependencies>
 	<build>
 		<!-- При запуске как java приложение в отладке в STS корневой web директорие является webapp.
@@ -36,6 +55,14 @@
 		     BOOT-INF/classes/static/ Внутри jar архива это корневая web директория.
 		     -->
 		<resources>
+			<!-- <resource>
+			    <directory>${basedir}/src/main/resources/db</directory>  
+			    <targetPath>resources/db/</targetPath>
+		    </resource> -->
+		    <resource>
+			    <directory>${basedir}/src/main/resources/</directory>  
+			    <targetPath>resources/</targetPath>
+		    </resource>
             <resource>
                 <directory>${basedir}/src/main/webapp</directory>
                 <includes>
