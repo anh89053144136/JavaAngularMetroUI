@@ -12,7 +12,7 @@ public class HomeController {
     public RedirectView hello() {
 		return new RedirectView("index.html");
     }
-	
+
 	@GetMapping("/testdb")
     public void Testdb() throws Exception {
 		var session = HibernateUtils.GetSessionFactory();

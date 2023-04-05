@@ -5,12 +5,12 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-//import anh.entities.User;
+import anh.AngularMetroUI.entities.WeatherForecast;
 
 public class HibernateUtils {
-	
+
 	private static SessionFactory sessionFactory;
-	
+
 	/**
 	 *  A SessionFactory is set up once for an application!
 	 * @return
@@ -19,16 +19,17 @@ public class HibernateUtils {
 	public static SessionFactory GetSessionFactory() throws Exception {
 		if(sessionFactory != null)
 			return sessionFactory;
-		
+
+
 		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-				//.configure()
 		        //.configure( "resources/hibernate.cfg.xml" )
 		        .loadProperties( "resources/application.properties" )
 				.build();
 		try {
+			//sessionFactory = new MetadataSources( registry ).buildMetadata().buildSessionFactory();
+
 			sessionFactory = new MetadataSources(registry)
-			//.addAnnotatedClass(User.class)
-			//.addAnnotatedClass(FeedbackMessage.class)			
+			.addAnnotatedClass(WeatherForecast.class)
 			.buildMetadata()
 			.buildSessionFactory();
 		}
@@ -37,7 +38,7 @@ public class HibernateUtils {
 			// so destroy it manually.
 			StandardServiceRegistryBuilder.destroy( registry );
 		}
-		
+
 		return sessionFactory;
 	}
 }

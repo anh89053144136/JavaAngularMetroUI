@@ -21,13 +21,13 @@ public class CreateDataBase {
 	public void test() throws SQLException, LiquibaseException, IOException {
 		Connection cn = DriverManager.getConnection("jdbc:postgresql://192.168.116.134:5432/angularmetroui?characterEncoding=UTF-8", "angularmetroui", "angularmetroui");
         Liquibase liquibase = null;
-        
+
         Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(cn));
         // src/main/resources/db/main.xml
         liquibase = new Liquibase("resources/db/main.xml", //
         		new ClassLoaderResourceAccessor(), database);
-        
-//        try {        
+
+//        try {
         	liquibase.update("MyContext");
 //          } finally {
 //            if (cn != null) {
@@ -40,5 +40,5 @@ public class CreateDataBase {
 //            }
 //        }
 	}
-	
+
 }
