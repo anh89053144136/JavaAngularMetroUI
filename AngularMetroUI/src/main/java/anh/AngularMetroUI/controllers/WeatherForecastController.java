@@ -1,8 +1,11 @@
 package anh.AngularMetroUI.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import anh.AngularMetroUI.entities.WeatherForecast;
@@ -15,7 +18,7 @@ import anh.AngularMetroUI.models.ResultStatus;
 public class WeatherForecastController {
 
 	@Autowired
-	public IWeatherForecastsRepository repoUser;
+	public IWeatherForecastsRepository repo;
 
 	@GetMapping("weatherforecast")
 	public RequestResult<ListPageResult> Get()
@@ -25,7 +28,7 @@ public class WeatherForecastController {
 		var resultList = new ListPageResult<WeatherForecast>();
 		resultList.totalcount = 10;
 		try {
-			resultList.list = repoUser.GetList();
+			resultList.list = repo.GetList();
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -49,7 +52,49 @@ public class WeatherForecastController {
 		result.code = ResultStatus.Ok;
 
 		try {
-			result.result = repoUser.GetById(id);
+			result.result = repo.GetById(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			result.message = e.getMessage();
+			result.code = ResultStatus.Fail;
+
+			return result;
+		}
+
+		return result;
+	}
+	
+	@DeleteMapping("weatherforecast/{id}")
+	public RequestResult<WeatherForecast> Delete(@PathVariable int id)
+	{
+		var result = new RequestResult<WeatherForecast>();
+
+		result.code = ResultStatus.Ok;
+
+		try {
+			repo.Delete(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			result.message = e.getMessage();
+			result.code = ResultStatus.Fail;
+
+			return result;
+		}
+
+		return result;
+	}
+	
+	@PostMapping("edit/weatherforecast")
+	public RequestResult<WeatherForecast> Save(@RequestBody WeatherForecast obj)
+	{
+		var result = new RequestResult<WeatherForecast>();
+
+		result.code = ResultStatus.Ok;
+
+		try {
+			result.result = repo.Save(obj);
 		} catch (Exception e) {
 			e.printStackTrace();
 

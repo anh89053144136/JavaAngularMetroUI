@@ -28,6 +28,9 @@ public class WeatherForecastsRepository implements IWeatherForecastsRepository {
 		}
 	}
 
+	/**
+	 * Получить список
+	 */
 	@Override
 	public List<WeatherForecast> GetList() throws Exception {
 		List<WeatherForecast> result = null;
@@ -49,12 +52,16 @@ public class WeatherForecastsRepository implements IWeatherForecastsRepository {
 		}
 		catch(HibernateException ex)
 		{
+			// ToDo BL exception 
 			throw new Exception(ex.getMessage());
 		}
 
 		return result;
 	}
 
+	/**
+	 * Получить одну запись(для редактирования)
+	 */
 	@Override
 	public WeatherForecast GetById(int id) throws Exception
 	{
@@ -66,21 +73,65 @@ public class WeatherForecastsRepository implements IWeatherForecastsRepository {
 					.createEntityManager();
 
 			CriteriaBuilder builder = em.getCriteriaBuilder();
-/*
-			CriteriaQuery<WeatherForecast> criteria = builder.createQuery(WeatherForecast.class);
-			Root<WeatherForecast> root = criteria.from(WeatherForecast.class);
 
-			criteria.select(root).where(
-				    builder.and(builder.equal(root.get("Id"), id))
-			);
-*/
 			return em.find(WeatherForecast.class, id);
-			
-			//return em.createQuery(criteria).getSingleResult();
 		}
 		catch(HibernateException ex)
 		{
+			// ToDo BL exception 
 			throw new Exception(ex.getMessage());
+		}
+	}
+	
+	/**
+	 * Удалить
+	 */
+	@Override
+	public void Delete(int id) throws Exception {
+		var session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		var obj = new WeatherForecast();
+		obj.id = id;
+		
+		try
+		{
+			session.remove(obj);
+			session.getTransaction().commit();
+		}
+		catch(HibernateException ex)
+		{
+			// ToDo BL exception 
+			throw new Exception(ex.getMessage());
+		}
+		finally
+		{
+			session.close();
+		}
+	}
+	
+	/**
+	 * Обновить или создать. Должен возвращать обьект т к 
+	 */
+	public WeatherForecast Save(WeatherForecast obj) throws Exception {
+		var session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		try
+		{
+			var result = session.merge(obj);
+			session.getTransaction().commit();
+			
+			return result;
+		}
+		catch(HibernateException ex)
+		{
+			// ToDo BL exception 
+			throw new Exception(ex.getMessage());
+		}
+		finally
+		{
+			session.close();
 		}
 	}
 }
