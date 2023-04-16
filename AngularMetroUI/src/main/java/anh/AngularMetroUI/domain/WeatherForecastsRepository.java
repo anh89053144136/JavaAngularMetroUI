@@ -1,6 +1,7 @@
 package anh.AngularMetroUI.domain;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -12,6 +13,7 @@ import anh.AngularMetroUI.interfaces.IWeatherForecastsRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Root;
 
 @Repository
@@ -32,7 +34,8 @@ public class WeatherForecastsRepository implements IWeatherForecastsRepository {
 	 * Получить список
 	 */
 	@Override
-	public List<WeatherForecast> GetList() throws Exception {
+	public List<WeatherForecast> GetList(int pageIndex, int pageSize,
+            String sortField, String sortDirection) throws Exception {
 		List<WeatherForecast> result = null;
 
 		try
@@ -46,9 +49,17 @@ public class WeatherForecastsRepository implements IWeatherForecastsRepository {
 
 			CriteriaQuery<WeatherForecast> criteria = builder.createQuery(WeatherForecast.class);
 			Root<WeatherForecast> root = criteria.from(WeatherForecast.class);
-			criteria.select(root);
-
-			result = em.createQuery(criteria).getResultList();
+			//criteria.select(root);
+			
+			if(sortDirection.toLowerCase().equals("asc") )
+				criteria.orderBy(builder.asc(root.get(sortField)));
+			else
+				criteria.orderBy(builder.desc(root.get(sortField)));
+				
+			result = em.createQuery(criteria)
+					.setFirstResult(pageIndex * pageSize)
+					.setMaxResults(pageSize)
+					.getResultList();
 		}
 		catch(HibernateException ex)
 		{
@@ -59,6 +70,28 @@ public class WeatherForecastsRepository implements IWeatherForecastsRepository {
 		return result;
 	}
 
+	/**
+	 * кол-во записей без фильтрав и постраничного вывода
+	 * @return
+	 * @throws Exception 
+	 */
+	public Long GetTotalCount() throws Exception {
+		try
+		{
+			return sessionFactory
+					.openSession()
+					.getEntityManagerFactory()
+					.createEntityManager()
+					.createQuery("select count(*) from WeatherForecast", Long.class)
+				    .getSingleResult();
+		}
+		catch(HibernateException ex)
+		{
+			// ToDo BL exception 
+			throw new Exception(ex.getMessage());
+		}
+	}
+	
 	/**
 	 * Получить одну запись(для редактирования)
 	 */

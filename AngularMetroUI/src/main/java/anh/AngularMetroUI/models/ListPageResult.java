@@ -12,5 +12,5 @@ public class ListPageResult<T> {
     /**
      * Итоговое число записей в выбоке.
      */
-    public int totalcount;
+    public Long totalCount;
 }

@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import anh.AngularMetroUI.entities.WeatherForecast;
 import anh.AngularMetroUI.interfaces.IWeatherForecastsRepository;
-import anh.AngularMetroUI.models.ListPageResult;
-import anh.AngularMetroUI.models.RequestResult;
-import anh.AngularMetroUI.models.ResultStatus;
+import anh.AngularMetroUI.models.*;
 
 @RestController
 public class WeatherForecastController {
@@ -21,14 +19,15 @@ public class WeatherForecastController {
 	public IWeatherForecastsRepository repo;
 
 	@GetMapping("weatherforecast")
-	public RequestResult<ListPageResult> Get()
+	public RequestResult<ListPageResult> Get(int pageIndex, int pageSize,
+            String sortField, String sortDirection)
 	{
 		var result = new RequestResult<ListPageResult>();
 
 		var resultList = new ListPageResult<WeatherForecast>();
-		resultList.totalcount = 10;
 		try {
-			resultList.list = repo.GetList();
+			resultList.list = repo.GetList(pageIndex, pageSize, sortField, sortDirection);
+			resultList.totalCount = repo.GetTotalCount();
 		} catch (Exception e) {
 			e.printStackTrace();
 
